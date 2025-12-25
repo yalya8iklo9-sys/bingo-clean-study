@@ -1,68 +1,106 @@
+<!-- force update3 -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BINGO</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="manifest" href="manifest.webmanifest" />
+
   <style>
     body {
       font-family: sans-serif;
       text-align: center;
-      padding: 30px;
+      padding: 20px;
     }
     h1 {
       font-size: 48px;
-    }
-    #result {
-      font-size: 150px;
-      margin: 30px 0;
+      margin-bottom: 20px;
     }
     button {
-      font-size: 32px;
-      padding: 20px 40px;
+      font-size: 28px;
+      padding: 15px 40px;
+    }
+    #result {
+      margin-top: 30px;
+      font-size: 130px;
+      font-weight: bold;
+    }
+    #remain {
+      margin-top: 10px;
+      color: #666;
     }
     #history {
-      margin-top: 20px;
-      font-size: 20px;
+      margin-top: 30px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+    .ball {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 18px;
     }
   </style>
 </head>
 <body>
 
-<h1>BINGO</h1>
-<div id="result">-</div>
-<button onclick="draw()">抽選</button>
-<div id="history"></div>
+  <h1>BINGO</h1>
 
-<script>
-  // 1〜75 を作る
-  let numbers = Array.from({ length: 75 }, (_, i) => i + 1);
+  <button onclick="draw()">抽選する</button>
 
-  // Fisher–Yates シャッフル（完全公平）
-  function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
+  <div id="result">-</div>
+  <div id="remain"></div>
+
+  <div id="history"></div>
+
+  <script>
+    // 1〜75
+    let numbers = Array.from({ length: 75 }, (_, i) => i + 1);
+    let history = [];
+
+    function draw() {
+      if (numbers.length === 0) {
+        document.getElementById("result").textContent = "終了";
+        return;
+      }
+
+      const index = Math.floor(Math.random() * numbers.length);
+      const picked = numbers.splice(index, 1)[0];
+
+      history.unshift(picked);
+
+      document.getElementById("result").textContent = picked;
+      document.getElementById("remain").textContent =
+        `残り ${numbers.length} 個`;
+
+      renderHistory();
     }
-  }
 
-  shuffle(numbers);
+    function renderHistory() {
+      const historyDiv = document.getElementById("history");
+      historyDiv.innerHTML = "";
 
-  let index = 0;
-
-  function draw() {
-    if (index >= numbers.length) {
-      alert("全部出ました");
-      return;
+      history.forEach(num => {
+        const div = document.createElement("div");
+        div.className = "ball";
+        div.textContent = num;
+        historyDiv.appendChild(div);
+      });
     }
 
-    const num = numbers[index++];
-    document.getElementById("result").textContent = num;
-
-    const h = document.getElementById("history");
-    h.textContent += num + " ";
-  }
-</script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("sw.js");
+    }
+  </script>
 
 </body>
 </html>
