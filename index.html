@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>BINGO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 30px;
+    }
+    h1 {
+      font-size: 48px;
+    }
+    #result {
+      font-size: 150px;
+      margin: 30px 0;
+    }
+    button {
+      font-size: 32px;
+      padding: 20px 40px;
+    }
+    #history {
+      margin-top: 20px;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>BINGO</h1>
+<div id="result">-</div>
+<button onclick="draw()">抽選</button>
+<div id="history"></div>
+
+<script>
+  // 1〜75 を作る
+  let numbers = Array.from({ length: 75 }, (_, i) => i + 1);
+
+  // Fisher–Yates シャッフル（完全公平）
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+  }
+
+  shuffle(numbers);
+
+  let index = 0;
+
+  function draw() {
+    if (index >= numbers.length) {
+      alert("全部出ました");
+      return;
+    }
+
+    const num = numbers[index++];
+    document.getElementById("result").textContent = num;
+
+    const h = document.getElementById("history");
+    h.textContent += num + " ";
+  }
+</script>
+
+</body>
+</html>
